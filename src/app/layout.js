@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import GTMRouteTracker from "@/components/GTMRouteTracker";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,7 +12,7 @@ const inter = Inter({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://saifulislam.com";
 
-const GTM_ID = "GTM-WP92WFV8";
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
 export const metadata = {
   metadataBase: new URL(siteUrl),
@@ -107,6 +108,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable}`}>
       <head>
+        <Script id="google-tag-manager-dataLayer" strategy="beforeInteractive">
+          {`window.dataLayer = window.dataLayer || [];`}
+        </Script>
         <Script id="google-tag-manager" strategy="beforeInteractive">
           {`
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -132,6 +136,7 @@ export default function RootLayout({ children }) {
             />
           </noscript>
         )}
+        {GTM_ID && <GTMRouteTracker />}
         {children}
       </body>
     </html>
