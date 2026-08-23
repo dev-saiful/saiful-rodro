@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
-import Script from "next/script";
+import { GoogleTagManager } from "@next/third-parties/google";
 import GTMRouteTracker from "@/components/GTMRouteTracker";
+import ScrollDepthTracker from "@/components/ScrollDepthTracker";
 import "./globals.css";
 
 const inter = Inter({
@@ -108,35 +109,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable}`}>
       <head>
-        <Script id="google-tag-manager-dataLayer" strategy="beforeInteractive">
-          {`window.dataLayer = window.dataLayer || [];`}
-        </Script>
-        <Script id="google-tag-manager" strategy="beforeInteractive">
-          {`
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','${GTM_ID}');
-      `}
-        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className={`${inter.className} antialiased`}>
-        {GTM_ID && (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        )}
+        {GTM_ID && <GoogleTagManager gtmId={GTM_ID} />}
         {GTM_ID && <GTMRouteTracker />}
+        {GTM_ID && <ScrollDepthTracker />}
         {children}
       </body>
     </html>

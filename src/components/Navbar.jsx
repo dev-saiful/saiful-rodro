@@ -6,6 +6,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { CiMenuFries } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
 import { CircleCheck } from "lucide-react";
+import { useGTMEvent } from "@/hooks/useGTMEvent";
 
 const menuVariants = {
   closed: {
@@ -44,6 +45,7 @@ const navbarVariants = {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { track } = useGTMEvent();
 
   const handleScroll = useCallback(() => {
     setScrolled(window.scrollY > 12);
@@ -133,7 +135,11 @@ const Navbar = () => {
 
         {/* Desktop CTA */}
         <div className="hidden md:block">
-          <Link href="#contact" className="btn-primary px-5 py-2.5 text-sm">
+          <Link
+            href="#contact"
+            onClick={() => track("cta_click", { cta_location: "navbar_desktop", cta_text: "Book a Consultation" })}
+            className="btn-primary px-5 py-2.5 text-sm"
+          >
             Book a Consultation
             <span aria-hidden>→</span>
           </Link>
@@ -184,7 +190,10 @@ const Navbar = () => {
             <div className="border-t border-border p-6">
               <Link
                 href="#contact"
-                onClick={closeMenu}
+                onClick={() => {
+                  track("cta_click", { cta_location: "navbar_mobile", cta_text: "Book a Consultation" });
+                  closeMenu();
+                }}
                 className="btn-primary w-full text-base"
               >
                 Book a Consultation

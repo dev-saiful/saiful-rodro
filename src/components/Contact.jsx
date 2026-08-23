@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { Globe, Mail, Phone, Send, MessageCircle, CheckCircle } from "lucide-react";
+import { useGTMEvent } from "@/hooks/useGTMEvent";
 
 const secondaryInfo = [
   {
@@ -34,10 +35,12 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, amount: 0.12 });
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("idle");
+  const { track } = useGTMEvent();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("sending");
+    track("contact_form_submit", { form_name: "contact" });
 
     try {
       const res = await fetch("/api/send-message", {
@@ -49,11 +52,14 @@ export default function Contact() {
       if (res.ok) {
         setStatus("sent");
         setFormData({ name: "", email: "", message: "" });
+        track("contact_form_success", { form_name: "contact" });
       } else {
         setStatus("error");
+        track("contact_form_error", { form_name: "contact", error: "server_error" });
       }
     } catch {
       setStatus("error");
+      track("contact_form_error", { form_name: "contact", error: "network_error" });
     }
   };
 
@@ -177,6 +183,7 @@ export default function Contact() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track("outbound_link", { link_type: "whatsapp", link_url: whatsappLink })}
               className="group flex items-center gap-3 sm:gap-4 rounded-2xl border border-border bg-card p-4 sm:p-5 transition-all duration-200 hover:border-green-500/40 hover:bg-green-500/5"
             >
               <div className="grid h-10 w-10 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-xl bg-green-500/10 text-green-500 transition-all duration-300 group-hover:scale-105 group-hover:bg-green-500/20">
@@ -201,6 +208,7 @@ export default function Contact() {
             {/* Email CTA */}
             <a
               href="mailto:devwork.saiful@gmail.com"
+              onClick={() => track("outbound_link", { link_type: "email", link_url: "mailto:devwork.saiful@gmail.com" })}
               className="group flex items-center gap-3 sm:gap-4 rounded-2xl border border-border bg-card p-4 sm:p-5 transition-all duration-200 hover:border-brand/40 hover:bg-brand/5"
             >
               <div className="grid h-10 w-10 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-xl bg-brand/10 text-brand transition-all duration-300 group-hover:scale-105 group-hover:bg-brand/20">

@@ -3,10 +3,12 @@
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useState } from "react";
 import Link from "next/link";
+import { useGTMEvent } from "@/hooks/useGTMEvent";
 
 export default function StickyMobileCTA() {
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState(false);
+  const { track } = useGTMEvent();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     // Show after scrolling past ~400px (roughly past the hero)
@@ -23,6 +25,7 @@ export default function StickyMobileCTA() {
     >
       <Link
         href="#contact"
+        onClick={() => track("cta_click", { cta_location: "sticky_mobile", cta_text: "Let's Connect" })}
         className="flex items-center justify-center gap-2 bg-brand px-6 py-4 text-sm font-semibold text-brand-fg shadow-elevated transition-colors duration-200 hover:bg-brand-hover"
       >
         Let&apos;s Connect

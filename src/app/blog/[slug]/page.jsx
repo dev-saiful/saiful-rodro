@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { CalendarIcon } from "lucide-react"
 import { getPost } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
+import BlogReadTracker from "@/components/BlogReadTracker"
 
 // Helper function to generate metadata
 async function generatePostMetadata(post) {
@@ -119,6 +120,11 @@ export default async function BlogPost({ params }) {
 
   return (
     <div className="w-full bg-bg text-ink py-10">
+      <BlogReadTracker
+        title={post.title}
+        slug={post.slug.current}
+        category={post.categories?.[0]?.title || "uncategorized"}
+      />
       <article className="max-w-4xl mx-auto px-4 py-12">
         <header className="mb-12">
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-6">{post.title}</h1>
